@@ -1,4 +1,10 @@
 # redis-watch
+1. Redis服务端是个单线程的架构，不同的Client虽然看似可以同时保持连接，但发出去的命令是序列化执行的，这在通常的数据库理论下是最高级别的隔离
+2. 用MULTI/EXEC 来把多个命令组装成一次发送，达到原子性
+3. 用WATCH提供的乐观锁功能，在你EXEC的那一刻，如果被WATCH的键发生过改动，则MULTI到EXEC之间的指令全部不执行，不需要rollback
+4. 其他回答中提到的DISCARD指令只是用来撤销EXEC之前被暂存的指令，并不是回滚
+
+
 Redis使用watch完成秒杀抢购功能：
 使用redis中两个key完成秒杀抢购功能，mywatchkey用于存储抢购数量和mywatchlist用户存储抢购列表。
 它的优点如下：
